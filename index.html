@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPO JSS | All Open, Closed & Upcoming IPOs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: rgba(17, 24, 39, 0.9);
+      --muted: #cbd5e1;
+      --accent: #7c3aed;
+      --accent-2: #10b981;
+      --border: #1f2937;
+      --chip: #1e293b;
+      --warning: #fbbf24;
+      --error: #f87171;
+      --shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.15), transparent 25%),
+                  radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.12), transparent 22%),
+                  radial-gradient(circle at 80% 80%, rgba(248, 113, 113, 0.12), transparent 22%),
+                  var(--bg);
+      color: white;
+      min-height: 100vh;
+      position: relative;
+    }
+    .splash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.2), transparent 32%),
+                  radial-gradient(circle at 80% 15%, rgba(16, 185, 129, 0.2), transparent 30%),
+                  linear-gradient(135deg, #0f172a 0%, #0b1222 100%);
+      display: grid;
+      place-items: center;
+      z-index: 999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    .splash.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .splash-card {
+      padding: 32px 38px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, rgba(17, 24, 39, 0.95), rgba(17, 24, 39, 0.7));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+      text-align: center;
+    }
+    .splash-card .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 24px;
+      letter-spacing: 0.6px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #7c3aed, #10b981);
+      box-shadow: 0 20px 40px rgba(124, 58, 237, 0.3);
+    }
+    .splash-card p {
+      margin: 14px 0 0;
+      color: #cbd5e1;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    header {
+      padding: 24px clamp(18px, 4vw, 38px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 0.5px;
+    }
+    .brand .pill {
+      background: linear-gradient(135deg, #7c3aed, #10b981);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 12px 30px rgba(124, 58, 237, 0.35);
+    }
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: nowrap;
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+    .filters {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: nowrap;
+      min-width: max-content;
+    }
+    .chip {
+      background: var(--chip);
+      border: 1px solid transparent;
+      color: var(--muted);
+      padding: 9px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .chip.active {
+      border-color: rgba(124, 58, 237, 0.7);
+      color: white;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(16, 185, 129, 0.18));
+      box-shadow: 0 10px 28px rgba(124, 58, 237, 0.25);
+    }
+    .search {
+      position: relative;
+      flex: 1 1 260px;
+      max-width: 420px;
+    }
+    .search input {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #0b1222;
+      color: white;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s ease;
+    }
+    .search input:focus {
+      border-color: rgba(124, 58, 237, 0.7);
+    }
+    .search svg {
+      position: absolute;
+      top: 11px;
+      left: 14px;
+      width: 18px;
+      height: 18px;
+      opacity: 0.65;
+    }
+    main {
+      padding: 18px clamp(18px, 4vw, 38px) 36px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.18s ease, border 0.18s ease, box-shadow 0.18s ease;
+      backdrop-filter: blur(10px);
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.4), rgba(16, 185, 129, 0.35));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    .card:hover { transform: translateY(-4px); border-color: rgba(124, 58, 237, 0.4); box-shadow: 0 24px 48px rgba(0,0,0,0.45); }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .card h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.4;
+    }
+    .badge {
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .badge.open { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .badge.upcoming { background: rgba(124, 58, 237, 0.15); color: #c084fc; }
+    .badge.closed { background: rgba(248, 113, 113, 0.15); color: #fca5a5; }
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .meta strong { display: block; color: white; margin-bottom: 3px; font-size: 14px; }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    .detail-grid strong { display: block; color: white; margin-bottom: 4px; }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    a.button, button {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.18s ease, background 0.18s ease;
+      color: white;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #10b981);
+      box-shadow: 0 12px 28px rgba(124, 58, 237, 0.25);
+    }
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-link {
+      padding: 0;
+      border: none;
+      background: none;
+      color: #a5b4fc;
+      font-weight: 600;
+    }
+    a.button:hover, button:hover { transform: translateY(-1px); }
+    details {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: white;
+      list-style: none;
+    }
+    summary::marker { display: none; }
+    summary::-webkit-details-marker { display: none; }
+    .note {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+    .tag-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .list {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 0;
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+  </style>
+</head>
+<body>
+  <div id="splash" class="splash">
+    <div class="splash-card">
+      <div class="logo">IPO JSS</div>
+      <p>Premium IPO tracker is loading...</p>
+    </div>
+  </div>
+
+  <header>
+    <div class="brand">
+      <div class="pill">IPO JSS</div>
+      <div>All Open, Closed & Upcoming IPO Tracker</div>
+    </div>
+    <div class="filter-row">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="7" />
+          <line x1="16.65" y1="16.65" x2="21" y2="21" />
+        </svg>
+        <input id="search" placeholder="Company / IPO search..." />
+      </div>
+      <div class="filters">
+        <div class="chip active" data-filter="all">All</div>
+        <div class="chip" data-filter="open">Open</div>
+        <div class="chip" data-filter="upcoming">Upcoming</div>
+        <div class="chip" data-filter="closed">Closed</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty" hidden>कोई IPO नहीं मिला। फ़िल्टर बदलकर देखें।</div>
+  </main>
+
+  <script>
+    const IPO_LIST = [
+      {
+        name: "Rurih Industries",
+        status: "closed",
+        openDate: "02 Dec 2025",
+        closeDate: "05 Dec 2025",
+        priceBand: "₹120 - ₹128",
+        lotSize: "80 shares",
+        issueSize: "₹650 Cr",
+        allotment: "09 Dec 2025",
+        listing: "12 Dec 2025",
+        gmp: "+18%",
+        listingGains: "+15.4%",
+        description: "Specialty chemicals manufacturer with export focus.",
+        sector: "Chemicals",
+        exchange: "NSE | BSE",
+        business: "Aromatic intermediates & performance additives",
+        registrar: "KFintech",
+        leadManagers: "Axis Capital, ICICI Securities",
+        website: "https://rurihindustries.com",
+        highlights: [
+          "70% capacity utilisation; brownfield expansion underway",
+          "Long-term contracts with EU agrochemical majors",
+          "EBITDA margin 18.5%, ROCE 19% (FY25)"
+        ]
+      },
+      {
+        name: "Nova Mobility",
+        status: "open",
+        openDate: "14 Dec 2025",
+        closeDate: "18 Dec 2025",
+        priceBand: "₹410 - ₹432",
+        lotSize: "34 shares",
+        issueSize: "₹1,250 Cr",
+        allotment: "19 Dec 2025",
+        listing: "23 Dec 2025",
+        gmp: "+22%",
+        listingGains: null,
+        description: "EV drivetrain & battery pack maker with strong OEM tie-ups.",
+        sector: "EV / Auto",
+        exchange: "NSE | BSE",
+        business: "E-axles, battery packs, BMS software for 2W/4W EVs",
+        registrar: "Link Intime",
+        leadManagers: "Kotak, JM Financial",
+        website: "https://novamobility.com",
+        highlights: [
+          "Order book: ₹3,400 Cr; 60% from repeat OEMs",
+          "Backward integrated for cells & power electronics",
+          "Positive cash flow from operations last 6 quarters"
+        ]
+      },
+      {
+        name: "ByteStack Cloud",
+        status: "upcoming",
+        openDate: "27 Dec 2025",
+        closeDate: "30 Dec 2025",
+        priceBand: "₹720 - ₹760",
+        lotSize: "18 shares",
+        issueSize: "₹2,050 Cr",
+        allotment: "31 Dec 2025",
+        listing: "03 Jan 2026",
+        gmp: "+8%",
+        listingGains: null,
+        description: "Cloud infra + edge CDN provider, profitable for 3+ years.",
+        sector: "Tech",
+        exchange: "NSE | BSE",
+        business: "IaaS, managed Kubernetes, edge CDN in APAC",
+        registrar: "KFintech",
+        leadManagers: "Goldman Sachs, HDFC Bank",
+        website: "https://bytestackcloud.com",
+        highlights: [
+          "Net revenue retention 129%; churn under 3%",
+          "15 edge POPs live; latency SLA 30ms pan-India",
+          "PAT margin 12.4% with zero net debt"
+        ]
+      },
+      {
+        name: "AgriNova Seeds",
+        status: "closed",
+        openDate: "21 Nov 2025",
+        closeDate: "25 Nov 2025",
+        priceBand: "₹155 - ₹165",
+        lotSize: "90 shares",
+        issueSize: "₹480 Cr",
+        allotment: "27 Nov 2025",
+        listing: "02 Dec 2025",
+        gmp: "+10%",
+        listingGains: "+11.2%",
+        description: "Hybrid seeds & agri biotech firm with 20% export revenue.",
+        sector: "Agri",
+        exchange: "NSE | BSE",
+        business: "Hybrid seeds (cotton, maize, veg) and trait research",
+        registrar: "Link Intime",
+        leadManagers: "Edelweiss, SBI Caps",
+        website: "https://agrinova.in",
+        highlights: [
+          "R&D spends 7% of revenue; 180+ active hybrids",
+          "Distribution: 1,200 dealers, presence in 14 states",
+          "Working capital days reduced from 110 to 82 YoY"
+        ]
+      },
+      {
+        name: "Metro Realty REIT",
+        status: "open",
+        openDate: "13 Dec 2025",
+        closeDate: "17 Dec 2025",
+        priceBand: "₹95 - ₹100",
+        lotSize: "150 units",
+        issueSize: "₹1,050 Cr",
+        allotment: "18 Dec 2025",
+        listing: "22 Dec 2025",
+        gmp: "+5%",
+        listingGains: null,
+        description: "Yield-focused REIT with grade-A commercial portfolio.",
+        sector: "Real Estate",
+        exchange: "NSE",
+        business: "Commercial REIT; 9.2 msf office + retail, 94% occupancy",
+        registrar: "KFintech",
+        leadManagers: "ICICI Securities, HSBC",
+        website: "https://metroreitreit.com",
+        highlights: [
+          "WALE 6.1 years; top-5 tenants contribute 32% rent",
+          "No major lease expiries till FY27",
+          "Projected yield 7.8% in first full year"
+        ]
+      }
+    ];
+
+    const grid = document.getElementById("grid");
+    const empty = document.getElementById("empty");
+    const searchInput = document.getElementById("search");
+    const chips = [...document.querySelectorAll(".chip")];
+    let activeFilter = "all";
+
+    const statusLabel = {
+      open: { text: "Open", cls: "open" },
+      upcoming: { text: "Upcoming", cls: "upcoming" },
+      closed: { text: "Closed", cls: "closed" },
+    };
+
+    function render(list) {
+      grid.innerHTML = "";
+      if (!list.length) {
+        empty.hidden = false;
+        return;
+      }
+      empty.hidden = true;
+
+      list.forEach((ipo) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-header">
+            <h3>${ipo.name}</h3>
+            <span class="badge ${statusLabel[ipo.status].cls}">${statusLabel[ipo.status].text}</span>
+          </div>
+          <div class="tag-row">
+            <div class="tag">Open: ${ipo.openDate}</div>
+            <div class="tag">Close: ${ipo.closeDate}</div>
+            <div class="tag">Exchange: ${ipo.exchange}</div>
+            <div class="tag">Sector: ${ipo.sector}</div>
+          </div>
+          <div class="meta">
+            <div><strong>Price Band</strong>${ipo.priceBand}</div>
+            <div><strong>Lot Size</strong>${ipo.lotSize}</div>
+            <div><strong>Issue Size</strong>${ipo.issueSize}</div>
+            <div><strong>GMP</strong>${ipo.gmp ?? "—"}</div>
+            <div><strong>Allotment</strong>${ipo.allotment}</div>
+            <div><strong>Listing</strong>${ipo.listing}</div>
+            <div><strong>Listing Gains</strong>${ipo.listingGains ?? "—"}</div>
+          </div>
+          <details>
+            <summary>Details & Allotment</summary>
+            <p class="note">${ipo.description}</p>
+            <div class="detail-grid">
+              <div><strong>Business</strong>${ipo.business}</div>
+              <div><strong>Issue Size</strong>${ipo.issueSize}</div>
+              <div><strong>Registrar</strong>${ipo.registrar}</div>
+              <div><strong>Lead Managers</strong>${ipo.leadManagers}</div>
+              <div><strong>Website</strong><br><a class="btn-link" href="${ipo.website || '#'}" target="_blank" rel="noopener">Visit</a></div>
+            </div>
+            <ul class="list">
+              ${ipo.highlights.map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+            <div class="actions">
+              <a class="button btn-primary" href="https://ipostatus.kfintech.com" target="_blank" rel="noopener">Allotment Check</a>
+              <a class="button btn-ghost" href="${ipo.website || '#'}" target="_blank" rel="noopener">Company Details</a>
+            </div>
+          </details>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function applyFilter() {
+      const q = searchInput.value.trim().toLowerCase();
+      const filtered = IPO_LIST.filter((ipo) => {
+        const byStatus = activeFilter === "all" || ipo.status === activeFilter;
+        const byText = !q || ipo.name.toLowerCase().includes(q) || ipo.sector.toLowerCase().includes(q);
+        return byStatus && byText;
+      });
+      render(filtered);
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        chips.forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeFilter = chip.dataset.filter;
+        applyFilter();
+      });
+    });
+
+    searchInput.addEventListener("input", applyFilter);
+    render(IPO_LIST);
+
+    window.addEventListener("load", () => {
+      setTimeout(() => document.getElementById("splash").classList.add("hidden"), 800);
+    });
+  </script>
+</body>
+</html>
+
